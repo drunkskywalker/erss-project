@@ -1,0 +1,82 @@
+{% extends "amazon/header.html" %}
+
+
+{% block content %} 
+
+{% load crispy_forms_tags %}         
+
+
+  <style>
+    .center {
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    width: auto;
+    text-align: center;
+  }
+      img {
+        max-width: 300px; 
+        max-height: 200px; 
+      }
+    table {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      height: auto;
+      width: auto;
+      text-align: center;
+      }
+     
+    .defaultInvisible{
+      display: none;   
+      margin-left: auto;
+      margin-right: auto;
+      height: auto;
+      width: auto;
+      text-align: center;
+       tbody tr:nth-of-type(n+6) {
+    display: none;
+  }
+    }
+
+    .search-bar {
+			padding: 10px;
+			border-radius: 5px;
+			border: 1px solid gray;
+			width: 1000px;
+      margin-left: auto;
+		}
+
+  </style>
+
+  <h1 class="text-center">Product Detail</h1>
+
+  <h3>{{inv.1}}</h3>
+    <h5>Stockpile: {{inv.2}}</h5>
+    <img src="data:;base64,{{ inv.3 }}"/>
+    <h5>Average rating: {{avg}}</h5>
+{% if user.is_authenticated %}
+<h3>Actions:</h3>
+        <a href="/buy/{{ inv.0 }}">Buy</a><h1></h1><a href="/restock/{{ inv.0 }}">Request restock</a>
+
+{% endif %}
+
+<table  cellspacing = "30" cellpadding="20" id = "comments">
+
+<thead>
+    <tr>
+
+      <th>Rating</th>
+      <th>Comments</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for uid, c in comments.items %}
+      <tr>
+        <td>{{ c.0 }}</td>
+        <td>{{ c.1 }}</td>
+      </tr>
+
+  {% endfor %}
+{% endblock %}

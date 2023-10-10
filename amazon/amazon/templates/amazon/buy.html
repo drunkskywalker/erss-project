@@ -1,0 +1,44 @@
+{% extends "amazon/header.html" %}
+
+
+
+{% block content %}
+{% if user.is_authenticated %}
+
+{% if type == "new" %}
+  <h1>Buy {{inv}}</h1>
+
+    <form method="post">
+    {% csrf_token %}
+    {{ buy_form.as_p }}
+    <input type="submit" value={{type}}>
+  </form>
+
+ {% endif %}
+  {% if type == "modify" %}
+  <h1> **********Debug Page**********</h1>
+  <h1>Modify Status</h1>
+    <form method="post">
+    {% csrf_token %}
+    {{ buy_form.as_p }}
+    <input type="submit" value={{type}}>
+  </form>
+
+  {% endif %}
+
+{% if type == "restock" %}
+  <h1>Restock {{inv.product.descrption}} in warehouse {{inv.warehouse.wid}}</h1>
+ 
+    <form method="post">
+    {% csrf_token %}
+    {{ buy_form.as_p }}
+    <input type="submit" value={{type}}>
+  </form>
+
+  {% endif %}
+
+{% else %}
+<h1>You must login first to place orders.</h1>
+{% endif %}
+
+{% endblock %}

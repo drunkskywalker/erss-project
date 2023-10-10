@@ -1,0 +1,5 @@
+SQLAlchemy
+Django
+protobuf==3.14.0
+django-crispy-forms==1.14.0
+psycopg2

@@ -1,0 +1,22 @@
+
+{% extends "amazon/header.html" %}
+
+{% block content %} 
+
+{% load crispy_forms_tags %}         
+
+{% if type == 'login' %}
+<p>{{type}} failed. Please check your username and password, and Click <a href="/login">here</a> to try to login, or <a href="/register">here</a> to create a new account.</p>
+
+{% elif type == 'register' %}
+<p>{{type}} failed. Please check your username and password, and Click <a href="/register">here</a> to try to register again.</p>
+
+{% elif type == 'out of stock' %}
+<p>The product you ordered is out of stock. wait for a while as we replenish our stockpile.</p>
+
+{% elif type == 'modify order' %}
+<p>Modify order failed. It's most likely that the product has picked by UPS.</p>
+
+
+{%endif%}
+{%endblock%}

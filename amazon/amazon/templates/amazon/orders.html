@@ -1,0 +1,68 @@
+{% extends "amazon/header.html" %}
+<div class="container py-5">
+{% block content %} 
+
+{% load crispy_forms_tags %}    
+
+<style>
+    table {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      height: auto;
+      width: auto;
+      text-align: center;
+      }
+</style>
+
+
+
+{% if user.is_authenticated %}
+
+
+
+
+
+ <h1 class='text-center'>Your Orders</h1>
+  <table class = "center" cellspacing = "30" cellpadding="20">
+    <thead>
+      <tr>
+        <th>order ID</th>
+        <th>product description</th>
+        <th>warehouse id</th>
+        <th>warehouse location</th>
+        <th>deliver location</th>
+        <th>amount</th>
+        <th>status</th>
+        <th>ups id</th>
+        <th>Actions</th>
+
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in orders.items %}
+        <tr>
+          <td>{{ key }}</td>
+
+        {% for item in value %}
+        <td> {{item}} </td>
+        {% endfor %}
+        <td><a href = "/order/modify/{{ key }}">Modify status</a>
+        <a href = "/order/ups/{{ key }}">provide upsid</a>
+         {% if value.5 == "delivered" %}
+          <a href = "/order/comment/{{ key }}">rate and comment</a>
+          {% endif %}
+        
+        </td>
+
+       
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endif %}
+
+</div>{% endblock %}

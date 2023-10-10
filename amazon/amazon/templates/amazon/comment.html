@@ -1,0 +1,22 @@
+
+{% extends "amazon/header.html" %}
+
+
+
+{% block content %}
+{% if user.is_authenticated %}
+
+
+  <h1>Rate and Comment on order {{ord.oid}}</h1>
+ 
+  <form method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <input type="submit" value="Rate">
+  </form>
+
+{% else %}
+<h1>You must login first to place orders.</h1>
+{% endif %}
+
+{% endblock %}

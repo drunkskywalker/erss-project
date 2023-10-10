@@ -1,0 +1,28 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: amazon
+      POSTGRES_PASSWORD: AlchOfRevo12A2
+      POSTGRES_DB: amazon
+    volumes:
+      - data-volume:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "5432"
+
+  amazon:
+    build: ./amazon
+    depends_on:
+      - postgres
+    command: /code/run.sh
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+
+volumes:
+  data-volume:

@@ -1,0 +1,101 @@
+syntax = "proto2";
+
+/*Amazon first tries to connect to the world. After getting the world id, connect to UPS*/
+message AUConnect{
+  required int64 worldid = 1;
+}
+
+/*UPS first receives AUConnect and sends back UAConnected, then tries to connect to the world*/
+message UAConnected{
+  required int64 worldid = 1;
+  required string result = 2; /*result string is "connected!" or failure info*/
+}
+
+message AOrder{/*intermediate class for AUPlaceOrder*/
+  required int64 id = 1;
+  required string description = 2;
+  required int32 count = 3;
+  required int32 x = 4;/* delivery destination */
+  required int32 y = 5;
+  required int32 whid = 6;/*MODIFIED*/
+}
+
+/*Every time user places an order on the Amazon website, Amazon sends this to UPS. UPS then creates a package in the database*/ 
+message AUPlaceOrder{
+  optional string userid = 1; /*website user's UPS userid, optional*/
+  required AOrder order = 2; 
+  required int64 shipid = 3;
+  required int64 seqnum = 4;
+}
+
+/*When a user on the Amazon website wants to associate the order with its UPS userid after placing its order. Attention: UPS may send back error info rather than ack*/ 
+message AUAssociateUserId{
+  required string userid = 1; 
+  required int64 shipid = 2;
+  required int64 seqnum = 3;
+}
+
+/*at a certain time or packages in the warehouse reaches a certain amount, Amazon calls UPS to let the truck go to a certain warehouse to collect packages. After sending this message, Amazon may add more packages to this truck*/
+message AUCallTruck{
+  required int32 whnum = 1;
+  repeated int64 shipid = 2; /* because UPS website needs to show truck en route to warehouse status*/
+  required int64 seqnum = 3;
+}
+
+message UATruckArrived{
+  required int32 truckid = 1;
+  required int32 whid = 2;
+  required int64 seqnum = 3;
+}
+
+/*When begin loading or the packages are all loaded, Amazon tells UPS to update the truck status*/
+message AUUpdateTruckStatus{
+  required int32 truckid = 1;
+  required string status = 2;/*"loading" or "loaded"*/
+  required int64 seqnum = 3;
+}
+
+/*after loaded*/
+message AUTruckGoDeliver{
+  required int32 truckid = 1;
+  repeated int64 shipid = 2;
+  required int64 seqnum = 3;
+}
+
+/*When package is delivering or delivered, UPS sends the corresponding status to Amazon*/
+message UAUpdatePackageStatus{
+  required int64 shipid = 1;
+  required string status = 2; /*"delivering" or "delivered"*/
+  required int64 seqnum = 3;
+}
+
+message UAUpdatePackageAddress{
+  required int64 shipid = 1;
+  required int32 x = 2;
+  required int32 y = 3;
+  required int64 seqnum = 4;
+}
+
+message Err{
+  required string err = 1;
+  required int64 originseqnum = 2;
+  required int64 seqnum = 3;
+}
+
+message AUMessages{
+  repeated AUPlaceOrder order = 1; 
+  repeated AUAssociateUserId associateUserId = 2;/*MODIFIED*/
+  repeated AUCallTruck callTruck = 3; 
+  repeated AUUpdateTruckStatus updateTruckStatus = 4;
+  repeated AUTruckGoDeliver truckGoDeliver = 5;
+  repeated Err error = 6;
+  repeated int64 acks = 7;
+}
+
+message UAMessages{
+  repeated UATruckArrived truckArrived = 1; 
+  repeated UAUpdatePackageStatus updatePackageStatus = 2; 
+  repeated UAUpdatePackageAddress updatePackageAddress = 3; 
+  repeated Err error = 4;
+  repeated int64 acks = 5;
+}

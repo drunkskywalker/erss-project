@@ -1,0 +1,237 @@
+{% extends "amazon/header.html" %}
+
+
+{% block content %} 
+
+{% load crispy_forms_tags %}         
+
+
+  <style>
+    .center {
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    width: auto;
+    text-align: center;
+  }
+      img {
+        max-width: 300px; 
+        max-height: 200px; 
+      }
+    table {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      height: auto;
+      width: auto;
+      text-align: center;
+      }
+     
+    .defaultInvisible{
+      display: none;   
+      margin-left: auto;
+      margin-right: auto;
+      height: auto;
+      width: auto;
+      text-align: center;
+       tbody tr:nth-of-type(n+6) {
+    display: none;
+  }
+    }
+
+    .search-bar {
+			padding: 10px;
+			border-radius: 5px;
+			border: 1px solid gray;
+			width: 1000px;
+      margin-left: auto;
+		}
+
+  </style>
+
+
+  
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+   <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1 class="text-center">Amazon</h1>
+<div class="container py-5">
+
+      {% if user.is_authenticated %}
+    <ul>  
+
+        <p class='text-center'>Welcome, {{user.username}}</a>. </p>
+
+<p class="text-center">click <a href="/logout">here</a> to Logout.</p>
+
+<p>
+  <br>
+ </p>
+      {% else %}
+  <p class='text-center'>Welcome, guest. </p>
+  <p>
+  <br>
+ </p>
+        <p class='text-center'>Click <a href="/login">here</a> to Login, </P>
+
+      <p class='text-center'>
+  or<br>
+    </p>
+
+        <p class='text-center'> Click <a href="/register">here</a> to Create a new account. </P>
+
+      {% endif %}
+
+    </ul>
+
+
+
+
+       
+ {% if user.is_authenticated %}
+<h1 class='text-center'>Product Search</h1>
+<input type="text" id="search-input" class = 'search-bar'>
+<button onclick="search_catalog()">Search</button>
+
+<table class='defaultInvisible' cellspacing = "30" cellpadding="20" id = "results">
+  <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Name</th>
+      <th>Amount</th>
+      <th>Icon</th>
+      <th>Tag</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="search-results">
+    {% for id, product in products.items %}
+      <tr>
+        <td>{{ id }}</td>
+        <td>{{ product.1 }}</td>
+        <td>{{ product.0 }}</td>
+        <td><img src="data:;base64,{{ product.2 }}"/></td>
+        <td>{{ product.3 }}</td>
+        <td><a href="/buy/{{ id }}">Buy</a><p><a href="/details/{{ id }}">Details</a><p><a href="/restock/{{ id }}">Restock</a></td>
+
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<script>
+  function search_catalog() {
+    var input = document.getElementById("search-input").value.toLowerCase();
+    var table = document.getElementById("search-results");
+    var rows = table.getElementsByTagName("tr");
+    document.getElementById("results").classList.remove("defaultInvisible");
+    document.getElementById("results").classList.add("center");
+    for (var i = 0; i < rows.length; i++) {
+      var description = rows[i].getElementsByTagName("td")[1];
+      var tag = rows[i].getElementsByTagName("td")[4];
+      if (description || tag) {
+        var text = description.textContent.toLowerCase();
+        var tagtext = tag.textContent.toLowerCase();
+        if (text.includes(input) || tagtext.includes(input)) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+  <h1 class='defaultInvisible'>Available Products</h1>
+  <table class='defaultInvisible' cellspacing = "30" cellpadding="20">
+    <thead>
+      <tr>
+        
+        <th>product ID</th>
+        <th>Name</th>
+        <th>Stockpile</th>
+        <th>Icon</th>
+        <th>Actions</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in products.items %}
+        <tr>
+          <td>{{ key }}</td>
+          <td>{{ value.1 }}</td>
+          <td>{{ value.0 }}</td>
+
+
+
+{% if user.is_authenticated %}
+
+          <td><a href="/buy/{{ key }}">Buy <a href="/restock/{{ key }}">Request restock</a></td>
+
+{% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% if user.is_authenticated %}
+ <h1 class='text-center'>Your Recent Orders</h1>
+  <p class = 'text-center'><a class='text-center' href="/order">see all</a>
+  <table class = "center" cellspacing = "30" cellpadding="20">
+    <thead>
+      <tr>
+        <th>order ID</th>
+        <th>product ID</th>
+        <th>warehouse id</th>
+        <th>amount</th>
+        <th>status</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in orders.items %}
+        <tr>
+          <td>{{ key }}</td>
+
+        {% for item in value %}
+        <td> {{item}} </td>
+        {% endfor %}
+
+
+
+        
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endif %}
+
+
+
+    <input type ="button" value="Button1" onclick='myfunction();' class='defaultInvisible'> </button>
+    
+    <script>
+      function myfunction(){
+    if (document.getElementById("userinfo").style.display === "none")
+        document.getElementById("userinfo").style.display="block";
+    else
+        document.getElementById("userinfo").style.display="none";}
+</script>
+
+    <table id='userinfo' class = 'defaultInvisible'>
+  <tr><td>username<td>{{user.username}} </tr>
+  <tr><td>email<td> {{user.email}}</tr>    
+</table>
+
+
+</div> 
+
+{% endblock %}

@@ -1,0 +1,50 @@
+
+
+{% if user.is_authenticated %}
+
+<style>
+    .center {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    table {
+        text-align: center
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        border-radius: 1px;
+    }
+
+</style>
+
+  
+  
+  <h1 class='center'>Your Account Information</h1>
+  {%  for obj in result %}
+  
+<br><br>
+<table class = 'center'>
+<tr><td>username</td><td> {{ obj.username }}</td> </tr>
+<tr>        <td>email</td><td> {{ obj.email }}</td></tr>
+        
+</table>
+
+ <form class='center' action = "/profile/edit/" method = "post">
+        {% csrf_token %}
+         <p><input class="center" type = "submit" value = "change password" /></p>
+      </form>
+
+
+{% endfor %}
+
+{% else %}
+
+<h1 class = 'center'>You are not logged in. </h1>
+
+{% endif %}
+<br><br>
+<p class='center'><a href='/' >home</a></p> 
+
